@@ -11,6 +11,6 @@ class UserNumbersSerializer(serializers.ModelSerializer):
         for number in value.split(','):
             if not number.isdigit():
                 raise serializers.ValidationError('Numbers must be digits')
-            if int(number) < 1 or int(number) > 60:
+            if int(number.strip()) < 1 or int(number.strip) > 60:
                 raise serializers.ValidationError('Numbers must be between 01 and 60')
         return value
