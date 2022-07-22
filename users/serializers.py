@@ -13,7 +13,10 @@ class UserSerializer(serializers.ModelSerializer):
     
     user_numbers = UserNumbersSerializer(many=True, read_only=True)
     
-class LoginSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ("username", "password")
+    def create(self, validated_data):
+        user = User.objects.create_user(**validated_data)
+        return user
+    
+class LoginSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField()
