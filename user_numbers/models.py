@@ -3,7 +3,9 @@ from uuid import uuid4
 
 
 class UserNumbersModel(models.Model):
-    id = models.CharField(primary_key=True, default=uuid4, editable=False)
+    id = models.CharField(
+        primary_key=True, default=uuid4, editable=False, max_length=50
+    )
     numbers = models.CharField(max_length=100)
     favorite = models.BooleanField(default=False)
 
