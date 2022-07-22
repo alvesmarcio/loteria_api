@@ -15,13 +15,13 @@ class UserIdView(generics.RetrieveUpdateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
-    lookup_field = "user_id"
+    lookup_field = "id"
     
 class UserIdDeleteView(generics.DestroyAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
-    lookup_field = "user_id"
+    lookup_field = "id"
     
 class LoginView(APIView):
     def post(self, request: Request):
