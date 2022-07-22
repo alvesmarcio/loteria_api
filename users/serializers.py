@@ -13,7 +13,9 @@ class UserSerializer(serializers.ModelSerializer):
     
     user_numbers = UserNumbersSerializer(many=True, read_only=True)
     
-class LoginSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ("username", "password")
+class LoginSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField()
+    # class Meta:
+    #     model = User
+    #     fields = ("username", "password")
