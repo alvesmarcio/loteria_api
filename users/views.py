@@ -10,6 +10,7 @@ from users.models import User
 from users.permissions import IsAdminOrUser, UserPermission
 from users.serializers import LoginSerializer, UserSerializer
 
+
 class UserView(ListCreateAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [UserPermission]
@@ -30,7 +31,6 @@ class UserIdView(RetrieveUpdateDestroyAPIView):
 
 class LoginView(APIView):  
     def post(self, request: Request):
-        print("teste")
         serialized = LoginSerializer(data=request.data)
         serialized.is_valid(raise_exception=True)
         
