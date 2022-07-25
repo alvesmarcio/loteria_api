@@ -38,7 +38,7 @@ class Lucky:
                 Lucky.excluded_sextants = Lucky.excluded_sextants.union(sextant)
                 break
 
-    def get_numbers(*args, **kwargs):
+    def get_numbers(numbers, adjacent=False, column=False, spread=False):
         """
         Takes in numbers as arguments and returns a list of 6 numbers from 1 to 60.
 
@@ -47,11 +47,6 @@ class Lucky:
         column: bool,
         spread: bool
         """
-
-        numbers = set(args)
-        adjacent = kwargs.get("adjacent")
-        column = kwargs.get("column")
-        spread = kwargs.get("spread")
 
         for number in numbers:
             Lucky._remove_adjacent(number)
