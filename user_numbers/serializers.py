@@ -12,7 +12,6 @@ class UserNumbersSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = validated_data.pop("user")
         user = User.objects.filter(id=user.id).first()
-        validated_data.favorite = True
         return UserNumbersModel.objects.create(**validated_data, user=user)
 
     def validate_numbers(self, value):
