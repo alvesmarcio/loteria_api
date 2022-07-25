@@ -1,9 +1,9 @@
 from django.urls import path
 
-from user_numbers.views import UserNumberIdView, UserNumberView
+from user_numbers.views import UserNumberCreateView, UserNumberIdView
 
 
 urlpatterns = [
-    path("numbers/", UserNumberView.as_view()),
-    path("numbers/<int:id>/", UserNumberIdView.as_view()),
+    path("numbers/", UserNumberCreateView.as_view()),
+    path("numbers/<str:id>/", UserNumberIdView.as_view()),
 ]
