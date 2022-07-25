@@ -1,27 +1,20 @@
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.generics import (
-    CreateAPIView,
-    DestroyAPIView,
-    ListAPIView,
-    RetrieveAPIView,
-    UpdateAPIView,
-)
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 
 from results.models import Result
-from results.permissions import AdminPermission
+from results.permissions import AdminPermission, ListOrAdminCreatePermission
 from results.serializers import ResultSerializer
 
 
-class ListRetrieveView(ListAPIView, RetrieveAPIView):
+class ListCreateView(ListCreateAPIView):
     authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [ListOrAdminCreatePermission]
 
     queryset = Result.objects.all()
     serializer_class = ResultSerializer
 
 
-class CreateUpdateDestroyView(CreateAPIView, UpdateAPIView, DestroyAPIView):
+class RetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [AdminPermission]
 

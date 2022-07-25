@@ -1,9 +1,9 @@
 from django.urls import path
 
-from results.views import CreateUpdateDestroyView, ListRetrieveView
+from results.views import ListCreateView, RetrieveUpdateDestroyView
 
 
 urlpatterns = [
-    path('results/', ListRetrieveView.as_view()),
-    path("results/<int:concurso>/", CreateUpdateDestroyView.as_view())
+    path("results/", ListCreateView.as_view()),
+    path("results/<int:concurso>/", RetrieveUpdateDestroyView.as_view()),
 ]
