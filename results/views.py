@@ -6,7 +6,7 @@ from results.permissions import AdminPermission, ListOrAdminCreatePermission
 from results.serializers import ResultSerializer
 
 
-class ListRetrieveView(ListCreateAPIView):
+class ListCreateView(ListCreateAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [ListOrAdminCreatePermission]
 
@@ -14,7 +14,7 @@ class ListRetrieveView(ListCreateAPIView):
     serializer_class = ResultSerializer
 
 
-class CreateUpdateDestroyView(RetrieveUpdateDestroyAPIView):
+class RetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [AdminPermission]
 
