@@ -8,6 +8,18 @@ from user_numbers.models import UserNumbersModel
 from user_numbers.serializers import UserNumbersSerializer
 
 
+class UserNumberCreateView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request: Request):
+        serialized = UserNumbersSerializer(data=request.data)
+        serialized.is_valid(raise_exception=True)
+        serialized.save(user=request.user)
+
+        return Response(serialized.data, status.HTTP_201_CREATED)
+
+
 class UserNumberIdView(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
@@ -21,15 +33,3 @@ class UserNumberIdView(APIView):
 
         except Http404:
             return Response({"detail": "Numbers not found"}, status.HTTP_404_NOT_FOUND)
-
-
-class UserNumberView(APIView):
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request: Request):
-        serialized = UserNumbersSerializer(data=request.data)
-        serialized.is_valid(raise_exception=True)
-        serialized.save()
-
-        return Response(serialized.data, status.HTTP_201_CREATED)
