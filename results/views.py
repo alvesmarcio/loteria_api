@@ -20,12 +20,4 @@ class RetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
 
     queryset = Result.objects.all()
     serializer_class = ResultSerializer
-
-    def perform_update(self, serializer):
-        serializer.save(concurso=self.kwargs.get("pk"))
-
-    def perform_destroy(self, instance):
-        instance.delete()
-
-    def perform_create(self, serializer):
-        serializer.save(concurso=self.kwargs.get("pk"))
+    lookup_field = "concurso"
