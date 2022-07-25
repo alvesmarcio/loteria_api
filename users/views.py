@@ -10,6 +10,8 @@ from users.models import User
 from users.permissions import IsAdminOrUser, UserPermission
 from users.serializers import LoginSerializer, UserSerializer
 
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 class UserView(ListCreateAPIView):
     authentication_classes = [TokenAuthentication]
@@ -29,9 +31,11 @@ class UserIdView(RetrieveUpdateDestroyAPIView):
     
 
 
-class LoginView(APIView):  
+class LoginView(APIView):
+
+    @swagger_auto_schema()  
     def post(self, request: Request):
-        serialized = LoginSerializer(data=request.data)
+        serialized = LoginSerializer(data=request)
         serialized.is_valid(raise_exception=True)
         
         user: User = authenticate(**serialized.validated_data)

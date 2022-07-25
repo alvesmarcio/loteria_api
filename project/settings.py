@@ -51,6 +51,8 @@ MY_APPS = ["users", "results", "user_numbers"]
 THIRD_PARTY_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
+    "rest_framework_swagger",
+    "drf_yasg"
 ]
 
 INSTALLED_APPS = DJANGO_APPS + MY_APPS + THIRD_PARTY_APPS
@@ -147,3 +149,5 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "users.User"
+
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
