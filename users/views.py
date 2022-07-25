@@ -1,6 +1,6 @@
-from rest_framework.generics import (ListCreateAPIView, RetrieveUpdateDestroyAPIView)
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.views import APIView, Response, Request, status
-from rest_framework.authtoken.models import  Token
+from rest_framework.authtoken.models import Token
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
@@ -16,34 +16,28 @@ class UserView(ListCreateAPIView):
     permission_classes = [UserPermission]
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    
-    
-    
-    
+
+
 class UserIdView(RetrieveUpdateDestroyAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated, IsAdminOrUser]
     queryset = User.objects.all()
     serializer_class = UserSerializer
     lookup_field = "id"
-    
 
 
-class LoginView(APIView):  
+class LoginView(APIView):
     def post(self, request: Request):
         serialized = LoginSerializer(data=request.data)
         serialized.is_valid(raise_exception=True)
-        
-        user: User = authenticate(**serialized.validated_data)
-        
-        if not user:
-            return Response({"detail": "invalid username or password"}, status.HTTP_401_UNAUTHORIZED)
-          
-        token, _ = Token.objects.get_or_create(user=user)
-        
-        return Response({"token": token.key}, status.HTTP_200_OK)
-    
 
-class UserNumberView(APIView):    
-    def get(self, request: Request, id:str):
-        return Response("ok" , status.HTTP_200_OK)
+        user: User = authenticate(**serialized.validated_data)
+
+        if not user:
+            return Response(
+                {"detail": "invalid username or password"}, status.HTTP_401_UNAUTHORIZED
+            )
+
+        token, _ = Token.objects.get_or_create(user=user)
+
+        return Response({"token": token.key}, status.HTTP_200_OK)
