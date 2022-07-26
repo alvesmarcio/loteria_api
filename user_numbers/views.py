@@ -6,7 +6,7 @@ from rest_framework.views import APIView, Request, Response, status
 
 from user_numbers.models import UserNumbersModel
 from user_numbers.serializers import UserNumbersSerializer
-from user_numbers.utils import Lucky
+from user_numbers.utils import lucky
 
 
 class UserNumberCreateView(APIView):
@@ -33,14 +33,17 @@ class UserNumberCreateView(APIView):
             user_favorite_numbers_serialized = UserNumbersSerializer(
                 user_favorite_numbers
             )
-
-            numbers = {
-                int(number)
-                for number in user_favorite_numbers_serialized.data["numbers"].split(
-                    ", "
-                )
-            }
-            draw_numbers = Lucky.get_numbers(numbers, adjacent, column, spread)
+            # print(user_favorite_numbers_serialized.data["numbers"], "<<<<<<<<<<<<<<<<<<<<<<<<<,")
+            if len(user_favorite_numbers_serialized.data["numbers"]) == 0:
+                numbers = set()    
+            else:
+                numbers = {
+                    int(number)
+                    for number in user_favorite_numbers_serialized.data["numbers"].split(
+                        ", "
+                    )
+                }
+            draw_numbers = lucky(numbers, adjacent, column, spread)
 
             return Response(draw_numbers, status.HTTP_200_OK)
 
