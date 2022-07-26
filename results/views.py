@@ -1,38 +1,63 @@
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.generics import (
-    CreateAPIView,
-    DestroyAPIView,
-    ListAPIView,
-    RetrieveAPIView,
-    UpdateAPIView,
+    ListCreateAPIView,
+    RetrieveUpdateDestroyAPIView,
 )
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView, Request
+from rest_framework.pagination import PageNumberPagination
 
 from results.models import Result
-from results.permissions import AdminPermission
+from results.permissions import AdminPermission, ListOrAdminPermission
 from results.serializers import ResultSerializer
+from results.utils import GetResultsFromAPI
+
+import requests
+import json
 
 
-class ListRetrieveView(ListAPIView, RetrieveAPIView):
+class CreateView(ListCreateAPIView):
     authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [ListOrAdminPermission]
 
     queryset = Result.objects.all()
     serializer_class = ResultSerializer
 
 
-class CreateUpdateDestroyView(CreateAPIView, UpdateAPIView, DestroyAPIView):
+class RetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [ListOrAdminPermission]
+
+    queryset = Result.objects.all()
+    serializer_class = ResultSerializer
+    lookup_field = "concurso"
+
+
+class GetListResultsView(APIView, PageNumberPagination):
     authentication_classes = [TokenAuthentication]
     permission_classes = [AdminPermission]
 
-    queryset = Result.objects.all()
-    serializer_class = ResultSerializer
+    def get(self, request: Request):
+        results = Result.objects.all()
+        serialized = ResultSerializer(results, many=True)
 
-    def perform_update(self, serializer):
-        serializer.save(concurso=self.kwargs.get("pk"))
+        url = "https://loteriascaixa-api.herokuapp.com/api/mega-sena"
+        response = requests.get(url)
+        results_ms = json.loads(response.text)
 
-    def perform_destroy(self, instance):
-        instance.delete()
+        if len(serialized.data) != len(results_ms):
 
-    def perform_create(self, serializer):
-        serializer.save(concurso=self.kwargs.get("pk"))
+            for result in results_ms:
+                result = GetResultsFromAPI.get_results(self, result)
+
+                serialized_result = ResultSerializer(data=result)
+                serialized_result.is_valid(raise_exception=True)
+                serialized_result.save()
+
+            results = Result.objects.all()
+
+        pagination = self.paginate_queryset(
+            queryset=results, request=request, view=self
+        )
+        serialized = ResultSerializer(pagination, many=True)
+
+        return self.get_paginated_response(serialized.data)

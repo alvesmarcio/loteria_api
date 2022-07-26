@@ -43,13 +43,15 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path("admin/", admin.site.urls),
     path("api/", include("users.urls")),
     path("LotoAPI", schema_view, name="LotoAPI"),
     path("", TemplateView.as_view(
         template_name="swagger-ui.html",
         extra_context={'schema_url':'LotoAPI'}
-    ), name='swagger-ui')
+    ), name='swagger-ui'),
+    path("api/", include("user_numbers.urls")),
+    path("api/", include("results.urls")),
 ]
 # urlpatterns += [
 #    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
