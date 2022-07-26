@@ -17,31 +17,43 @@ from django.contrib import admin
 from django.urls import include, path
 from rest_framework import permissions
 
+
+# from drf_yasg.views import get_schema_view
+# from drf_yasg import openapi
+
+# schema_view = get_schema_view(
+#     openapi.Info(
+#       title="LOTERIA API",
+#       default_version='v1',
+#       description="API destinada a geração de numeros para megasena baseados em algoritimos matematicos",
+#     #   terms_of_service="",
+#     #   contact=openapi.Contact(email="contact@snippets.local"),
+#     #   license=openapi.License(name="BSD License"),
+#    ),
+#    public=True,
+#    permission_classes=[permissions.AllowAny],
+# )
+
+from rest_framework.schemas import get_schema_view
 from django.views.generic import TemplateView
 
-from drf_yasg.views import get_schema_view
-from drf_yasg import openapi
-
 schema_view = get_schema_view(
-    openapi.Info(
-      title="LOTERIA API",
-      default_version='v1',
-      description="API destinada a geração de numeros para megasena baseados em algoritimos matematicos",
-    #   terms_of_service="",
-    #   contact=openapi.Contact(email="contact@snippets.local"),
-    #   license=openapi.License(name="BSD License"),
-   ),
-   public=True,
-   permission_classes=[permissions.AllowAny],
+    title="LotoApi",
+    description="Sorteador de numeros inteligente para jogar loteria!"
 )
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("api/", include("users.urls")),
-]
-urlpatterns += [
-   path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-   path('', TemplateView.as_view(template_name='swagger-ui.html',
-        extra_context={'schema_url':'openapi-schema'}
+    path("LotoAPI", schema_view, name="LotoAPI"),
+    path("", TemplateView.as_view(
+        template_name="swagger-ui.html",
+        extra_context={'schema_url':'LotoAPI'}
     ), name='swagger-ui')
 ]
+# urlpatterns += [
+#    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+#    path('', TemplateView.as_view(template_name='swagger-ui.html',
+#         extra_context={'schema_url':'openapi-schema'}
+#     ), name='swagger-ui')
+# ]
