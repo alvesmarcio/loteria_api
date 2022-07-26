@@ -15,13 +15,13 @@ class GetResultsFromAPI:
         for result in results:
             concurso = result["concurso"]
             day, month, year = result["data"].split("/")
-            date = year + "-" + month + "-" + day
+            data = year + "-" + month + "-" + day
             bola1, bola2, bola3, bola4, bola5, bola6 = [
                 int(bola) for bola in result["dezenas"]
             ]
 
-            data = {concurso, date, bola1, bola2, bola3, bola4, bola5, bola6}
-            serialized = ResultSerializer(**data)
+            info = {concurso, data, bola1, bola2, bola3, bola4, bola5, bola6}
+            serialized = ResultSerializer(**info)
             Result.objects.create(**serialized.data)
 
 
