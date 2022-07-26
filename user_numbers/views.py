@@ -1,12 +1,12 @@
 from django.http import Http404
-from django.shortcuts import get_object_or_404
 from rest_framework.authentication import TokenAuthentication
+from rest_framework.generics import RetrieveUpdateAPIView
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.views import APIView, Response, Request, status
-from user_numbers.utils import Lucky
+from rest_framework.views import APIView, Request, Response, status
 
 from user_numbers.models import UserNumbersModel
 from user_numbers.serializers import UserNumbersSerializer
+from user_numbers.utils import Lucky
 
 
 class UserNumberCreateView(APIView):
@@ -48,6 +48,10 @@ class UserNumberCreateView(APIView):
             return Response({"detail": "Numbers not found"}, status.HTTP_404_NOT_FOUND)
 
 
-class UserNumberIdView(APIView):
+class UserNumberIdView(RetrieveUpdateAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
+
+    queryset = UserNumbersModel.objects.all()
+    serializer_class = UserNumbersSerializer
+    lookup_field = "id"
