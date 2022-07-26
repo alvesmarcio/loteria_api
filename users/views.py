@@ -1,4 +1,4 @@
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, GenericAPIView
 from rest_framework.views import APIView, Response, Request, status
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import TokenAuthentication
@@ -28,12 +28,12 @@ class UserIdView(RetrieveUpdateDestroyAPIView):
     lookup_field = "id"
 
 
-class LoginView(generics.GenericAPIView):
+class LoginView(GenericAPIView):
     serializer_class = LoginSerializer
     # @swagger_auto_schema()  
     def post(self, request: Request):
 
-        serialized = LoginSerializer(data=request)
+        serialized = LoginSerializer(data=request.data)
         serialized.is_valid(raise_exception=True)
 
         user: User = authenticate(**serialized.validated_data)

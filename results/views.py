@@ -2,8 +2,9 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.generics import (
     ListCreateAPIView,
     RetrieveUpdateDestroyAPIView,
+    GenericAPIView
 )
-from rest_framework.views import APIView, Request
+from rest_framework.views import APIView, Request, Response, status
 from rest_framework.pagination import PageNumberPagination
 
 from results.models import Result
@@ -32,7 +33,8 @@ class RetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     lookup_field = "concurso"
 
 
-class GetListResultsView(APIView, PageNumberPagination):
+class GetListResultsView(GenericAPIView):
+    serializer_class = ResultSerializer
     authentication_classes = [TokenAuthentication]
     permission_classes = [AdminPermission]
 
@@ -40,7 +42,7 @@ class GetListResultsView(APIView, PageNumberPagination):
         results = Result.objects.all()
         serialized = ResultSerializer(results, many=True)
 
-        url = "https://loteriascaixa-api.herokuapp.com/api/mega-sena"
+        url = "https://loteriascaixa-api.herokuapp.com/api/mega-sena/"
         response = requests.get(url)
         results_ms = json.loads(response.text)
 
@@ -56,7 +58,7 @@ class GetListResultsView(APIView, PageNumberPagination):
             results = Result.objects.all()
 
         pagination = self.paginate_queryset(
-            queryset=results, request=request, view=self
+            queryset=results
         )
         serialized = ResultSerializer(pagination, many=True)
 
