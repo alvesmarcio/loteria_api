@@ -1,6 +1,7 @@
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, CreateAPIView
 from rest_framework.views import APIView, Request, Response, status
+from rest_framework.pagination import PageNumberPagination
 
 from results.models import Result
 from results.permissions import AdminPermission, ListOrAdminCreatePermission
@@ -28,17 +29,21 @@ class RetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     lookup_field = "concurso"
 
 
-class GetListResultsView(APIView):
-    def get(self, _: Request):
+class GetListResultsView(APIView, PageNumberPagination):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [AdminPermission]
+
+    def get(self, request: Request):
         results = Result.objects.all()
         serialized = ResultSerializer(results, many=True)
-        
-        if len(serialized.data) == 0:
-            url = "https://loteriascaixa-api.herokuapp.com/api/mega-sena"
-            response = requests.get(url)
-            results = json.loads(response.text)        
+               
+        url = "https://loteriascaixa-api.herokuapp.com/api/mega-sena"
+        response = requests.get(url)
+        results_ms = json.loads(response.text)        
+    
+        if len(serialized.data) != len(results_ms):
 
-            for result in results:
+            for result in results_ms:
                 result = GetResultsFromAPI.get_results(self, result)
 
                 serialized_result = ResultSerializer(data=result)
@@ -46,7 +51,8 @@ class GetListResultsView(APIView):
                 serialized_result.save()
         
             results = Result.objects.all()
-            serialized = ResultSerializer(results, many=True)     
             
+        pagination = self.paginate_queryset(queryset=results, request=request, view=self)            
+        serialized = ResultSerializer(pagination, many=True)         
 
-        return Response(serialized.data ,status.HTTP_200_OK)
+        return self.get_paginated_response(serialized.data)
