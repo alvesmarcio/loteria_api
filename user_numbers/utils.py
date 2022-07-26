@@ -1,7 +1,7 @@
 from random import choice
 
 
-class Lucky:
+def lucky(req_numbers, adjacent=False, column=False, spread=False):
     numbers = set(range(1, 61))
 
     SEXTANT_1 = {1, 2, 3, 4, 5, 11, 12, 13, 14, 15}
@@ -24,21 +24,20 @@ class Lucky:
     excluded_columns = set()
     excluded_sextants = set()
 
-    def _remove_adjacent(number):
-        Lucky.excluded_adjacents.add(number - 1)
-        Lucky.excluded_adjacents.add(number + 1)
+    def _remove_adjacent(number, excluded_adjacents):
+        excluded_adjacents.add(number - 1)
+        excluded_adjacents.add(number + 1)
 
-    def _remove_column(number):
+    def _remove_column(number, excluded_columns):
         column = {n for n in range(number % 10, 61, 10)}
-        Lucky.excluded_columns = Lucky.excluded_columns.union(column)
+        excluded_columns = excluded_columns.union(column)
 
-    def _remove_sextant(number):
-        for sextant in Lucky.SEXTANTS:
+    def _remove_sextant(number, excluded_sextants):
+        for sextant in SEXTANTS:
             if number in sextant:
-                Lucky.excluded_sextants = Lucky.excluded_sextants.union(sextant)
+                excluded_sextants = excluded_sextants.union(sextant)
                 break
 
-    def get_numbers(numbers, adjacent=False, column=False, spread=False):
         """
         Takes in numbers as arguments and returns a list of 6 numbers from 1 to 60.
 
@@ -48,32 +47,31 @@ class Lucky:
         spread: bool
         """
 
-        for number in numbers:
-            Lucky._remove_adjacent(number)
-            Lucky._remove_column(number)
-            Lucky._remove_sextant(number)
-            Lucky.numbers.discard(number)
+    for number in req_numbers:
+        _remove_adjacent(number, excluded_adjacents)
+        _remove_column(number, excluded_columns)
+        _remove_sextant(number, excluded_sextants)
+        numbers.discard(number)
 
-        for _ in range(len(numbers), 6):
+    for _ in range(len(req_numbers), 6):
 
-            if adjacent:
-                Lucky.numbers = Lucky.numbers.difference(Lucky.excluded_adjacents)
+        if adjacent:
+            numbers = numbers.difference(excluded_adjacents)
 
-            if column:
-                Lucky.numbers = Lucky.numbers.difference(Lucky.excluded_columns)
+        if column:
+            numbers = numbers.difference(excluded_columns)
 
-            if spread:
-                Lucky.numbers = Lucky.numbers.difference(Lucky.excluded_sextants)
+        if spread:
+            numbers = numbers.difference(excluded_sextants)
 
-            new_number = choice(tuple(Lucky.numbers))
-            numbers.add(new_number)
+        new_number = choice(tuple(numbers))
+        req_numbers.add(new_number)
 
-            Lucky._remove_adjacent(new_number)
-            Lucky._remove_column(new_number)
-            Lucky._remove_sextant(new_number)
-            Lucky.numbers.discard(new_number)
+        _remove_adjacent(new_number, excluded_adjacents)
+        _remove_column(new_number, excluded_columns)
+        _remove_sextant(new_number, excluded_sextants)
+        numbers.discard(new_number)
+    req_numbers = list(req_numbers)
+    req_numbers.sort()
 
-        numbers = list(numbers)
-        numbers.sort()
-
-        return numbers
+    return req_numbers
