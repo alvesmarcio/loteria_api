@@ -6,9 +6,9 @@ class AdminPermission(BasePermission):
         return request.user.is_superuser
 
 
-class ListOrAdminCreatePermission(BasePermission):
+class ListOrAdminPermission(BasePermission):
     def has_permission(self, request, view):
-        admin_methods = ["POST"]
+        admin_methods = ["POST", "PATCH", "DELETE"]
         if request.method in admin_methods:
             return request.user.is_superuser
 
