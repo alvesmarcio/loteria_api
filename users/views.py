@@ -1,17 +1,18 @@
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, GenericAPIView
-from rest_framework.views import APIView, Response, Request, status
+from rest_framework.generics import (
+    ListCreateAPIView,
+    RetrieveUpdateDestroyAPIView,
+    GenericAPIView,
+)
+from rest_framework.views import Response, Request, status
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
-from rest_framework import generics
 from django.contrib.auth import authenticate
 
 from users.models import User
 from users.permissions import IsAdminOrUser, UserPermission
 from users.serializers import LoginSerializer, UserSerializer
 
-# from drf_yasg.utils import swagger_auto_schema
-# from drf_yasg import openapi
 
 class UserView(ListCreateAPIView):
     authentication_classes = [TokenAuthentication]
@@ -30,7 +31,7 @@ class UserIdView(RetrieveUpdateDestroyAPIView):
 
 class LoginView(GenericAPIView):
     serializer_class = LoginSerializer
-    # @swagger_auto_schema()  
+
     def post(self, request: Request):
 
         serialized = LoginSerializer(data=request.data)
