@@ -1,6 +1,6 @@
 from django.http import Http404
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.generics import RetrieveUpdateAPIView
+from rest_framework.generics import RetrieveUpdateAPIView, GenericAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView, Request, Response, status
 
@@ -9,7 +9,8 @@ from user_numbers.serializers import UserNumbersSerializer
 from user_numbers.utils import lucky
 
 
-class UserNumberCreateView(APIView):
+class UserNumberCreateView(GenericAPIView):
+    serializer_class = UserNumbersSerializer
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 

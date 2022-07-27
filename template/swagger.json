@@ -1,0 +1,557 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Kenzie Courses",
+    "description": "Api to adminstrate students and courses",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000/api-documentation",
+      "description": "Servidor local"
+    }
+  ],
+  "paths": {
+    "/users": {
+      "post": {
+        "tags": ["Users"],
+        "summary": "Create a new user",
+        "description": "Register a new user if all parameters have been sent",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUser"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "User created successfully": {
+                    "$ref": "#/components/examples/UserCreated"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/CreateUserBadRequestErrors"
+          },
+          "409": {
+            "$ref": "#/components/responses/UserAlreadyExists"
+          }
+        }
+      },
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get all users",
+        "description": "Get all users, need Token and admin status",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "With access Token and admin user": {
+                    "value": "[\n\t{\n\t\t\"updatedAt\": \"2022-06-11T14:56:21.876Z\",\n\t\t\"createdAt\": \"2022-06-05T14:56:21.876Z\",\n\t\t\"isAdm\": true,\n\t\t\"email\": \"nixolas@kenzie.com\",\n\t\t\"firstName\": \"Nic\",\n\t\t\"lastName\": \"Ano\",\n\t\t\"id\": \"f5bc5dd6-bba6-4001-a069-ba850427acad\"\n\t},\n\t{\n\t\t\"updatedAt\": \"2022-06-11T15:56:21.876Z\",\n\t\t\"createdAt\": \"2022-06-11T15:56:21.876Z\",\n\t\t\"isAdm\": false,\n\t\t\"email\": \"marcelo@kenzie.com\",\n\t\t\"firstName\": \"Mark\",\n\t\t\"lastName\": \"Rominho\",\n\t\t\"id\": \"a124a50b-fbaf-471b-a7ec-d46306f3abb4\"\n\t}\n]"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/CreateUserBadRequestErrors"
+          },
+          "401": {
+            "$ref": "#/components/responses/NotAdmin"
+          }
+        }
+      }
+    },
+    "/users/:id": {
+      "patch": {
+        "tags": ["Users"],
+        "summary": "Update user",
+        "description": "Update user own information",
+        "parameters": [
+          {
+            "in": "path",
+            "required": true,
+            "name": "id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "firstName": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "User updated successfully": {
+                    "$ref": "#/components/examples/UserCreated"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/CreateUserBadRequestErrors"
+          },
+          "403": {
+            "$ref": "#/components/responses/UserAllowed"
+          },
+          "404": {
+            "$ref": "#/components/responses/UserNotFound"
+          }
+        }
+      },
+      "get": {
+        "tags": ["Users"],
+        "summary": "Return user info",
+        "description": "Return user info if user is the owner or admin",
+        "parameters": [
+          {
+            "in": "path",
+            "required": true,
+            "name": "id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "if user is Admin",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "OK": {
+                    "$ref": "#/components/examples/UserCreated"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/UserAllowed"
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "tags": ["Users"],
+        "summary": "Login",
+        "description": "Login on user account if credentials are correct",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Valid credentials": {
+                    "value": "{\n\t\"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijc5NzEwNWNiLTZkM2ItNDAzYy1iNjQyLTg3NzYwMWQ3NDE4MiIsImlhdCI6MTY1NDUzOTExOSwiZXhwIjoxNjU0NTQyNzE5fQ.91r0Vtym-TikOuUiu3KPpTN6XWwsCdoVYPY2AtVVjNk\"\n}"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/EmailRequiredField"
+          },
+          "401": {
+            "$ref": "#/components/responses/InvalidCredentials"
+          }
+        }
+      }
+    },
+    "/courses": {
+      "post": {
+        "tags": ["Courses"],
+        "summary": "Create a new course",
+        "description": "Create new course if user is admin",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCourse"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Course created successfully": {
+                    "value": "{\n\t\"courseName\": \"English\",\n\t\"duration\": \"6 months\",\n\t\"id\": \"92c6e00f-4e1a-43b2-a028-8c983000007c\"\n}"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/MissingToken"
+          },
+          "401": {
+            "$ref": "#/components/responses/NotAdmin"
+          }
+        }
+      },
+      "get": {
+        "tags": ["Courses"],
+        "summary": "Get all courses",
+        "description": "Get all courses, need Token authorization",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "With access Token": {
+                    "value": "{\n\t\"courses\": [\n\t\t{\n\t\t\t\"courseName\": \"English\",\n\t\t\t\"duration\": \"6 months\",\n\t\t\t\"id\": \"56r4f16h-3b1c-15a2-w384-3a129506704q\"\n\t\t},\n\t\t{\n\t\t\t\"courseName\": \"FrontEnd\",\n\t\t\t\"duration\": \"1 year\",\n\t\t\t\"id\": \"92c6e00f-4e1a-43b2-a028-8c983000007c\"\n\t\t}\n\t]\n}"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/MissingToken"
+          }
+        }
+      }
+    },
+    "/courses/:id": {
+      "patch": {
+        "tags": ["Courses"],
+        "summary": "Update course",
+        "description": "Update course if user is admin",
+        "parameters": [
+          {
+            "in": "path",
+            "required": true,
+            "name": "id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCourse"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Course created successfully": {
+                    "value": "{\n\t\"courseName\": \"FrontEnd\",\n\t\"duration\": \"1 year\",\n\t\"id\": \"92c6e00f-4e1a-43b2-a028-8c983000007c\"\n}"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/MissingToken"
+          },
+          "401": {
+            "$ref": "#/components/responses/NotAdmin"
+          }
+        }
+      }
+    },
+    "/courses/:id/users": {
+      "post": {
+        "tags": ["Courses"],
+        "parameters": [
+          {
+            "in": "path",
+            "required": true,
+            "name": "id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "summary": "Subscribe user to a course",
+        "description": "Subscribe user to course if user is not already subscribed",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Subscribe successfully": {
+                    "value": "{\n\t\"message\": \"Email de inscrição enviado com sucesso.\"\n}"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/MissingToken"
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "User already registered": {
+                    "value": "{\n\t\"message\": \"Student already registered in this course\"\n}"
+                  },
+                  "Course not found": {
+                    "value": "{\n\t\"message\": \"Course doesn't exist\"\n}"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "responses": {
+      "MissingToken": {
+        "description": "Bad Request",
+        "content": {
+          "application/json": {
+            "examples": {
+              "Without access Token": {
+                "value": "{\n\t\"message\": \"Missing authorization token.\"\n}"
+              }
+            }
+          }
+        }
+      },
+      "NotAdmin": {
+        "description": "Unauthorized",
+        "content": {
+          "application/json": {
+            "examples": {
+              "User is not admin": {
+                "value": "{\n\t\"message\": \"You are not allowed to access this information\"\n}"
+              }
+            }
+          }
+        }
+      },
+      "UserAllowed": {
+        "description": "Forbidden",
+        "content": {
+          "application/json": {
+            "examples": {
+              "User is not the owner or admin": {
+                "value": "{\n\t\"message\": \"You can't access information of another user\"\n}"
+              }
+            }
+          }
+        }
+      },
+      "UserAlreadyExists": {
+        "description": "Conflict",
+        "content": {
+          "application/json": {
+            "examples": {
+              "User email already registered": {
+                "value": "{\n\t\"message\": \"Email already in use\"\n}"
+              }
+            }
+          }
+        }
+      },
+      "CreateUserBadRequestErrors": {
+        "description": "Bad Request",
+        "content": {
+          "application/json": {
+            "examples": {
+              "Without access Token": {
+                "value": "{\n\t\"message\": \n\"Missing authorization token.\"\n}"
+              },
+              "User email already registered": {
+                "value": "{\n\t\"message\": [\n\t\t\"email is a required field\"\n\t]\n}"
+              }
+            }
+          }
+        }
+      },
+      "EmailRequiredField": {
+        "description": "Bad Request",
+        "content": {
+          "application/json": {
+            "examples": {
+              "Missing obrigatory field": {
+                "value": "{\n\t\"message\": [\n\t\t\"email is a required field\"\n\t]\n}"
+              }
+            }
+          }
+        }
+      },
+      "InvalidCredentials": {
+        "description": "Unauthorazed",
+        "content": {
+          "application/json": {
+            "examples": {
+              "Wrong email or password": {
+                "value": "{\n\t\"message\": \n\"Invalid credentials\"\n}"
+              }
+            }
+          }
+        }
+      },
+      "UserNotFound": {
+        "description": "Not Found",
+        "content": {
+          "application/json": {
+            "examples": {
+              "User id not found": {
+                "value": "{\n\t\"message\": \n\"User not found\"\n}"
+              }
+            }
+          }
+        }
+      }
+    },
+    "examples": {
+      "UserCreated": {
+        "value": "{\n\t\"courses\": [],\n\t\"updatedAt\": \"2022-06-11T11:20:36.500Z\",\n\t\"createdAt\": \"2022-06-11T11:20:36.500Z\",\n\t\"isAdm\": false,\n\t\"email\": \"nixolas@kenzie.com\",\n\t\"firstName\": \"Nic\",\n\t\"lastName\": \"Ano\",\n\t\"id\": \"797105cb-6d3b-403c-b642-877601d74182\"\n}"
+      }
+    },
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "isAdm": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          },
+          "courses": {
+            "$ref": "#/components/schemas/Course"
+          }
+        }
+      },
+      "Course": {
+        "type": "object",
+        "properties": {
+          "courseName": {
+            "type": "string"
+          },
+          "duration": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          }
+        }
+      },
+      "CreateUser": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "isAdm": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          }
+        }
+      },
+      "CreateCourse": {
+        "type": "object",
+        "properties": {
+          "courseName": {
+            "type": "string"
+          },
+          "duration": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
