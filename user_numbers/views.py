@@ -2,7 +2,7 @@ from django.http import Http404
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.generics import RetrieveUpdateAPIView, GenericAPIView
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.views import APIView, Request, Response, status
+from rest_framework.views import Request, Response, status
 
 from user_numbers.models import UserNumbersModel
 from user_numbers.serializers import UserNumbersSerializer
@@ -26,7 +26,7 @@ class UserNumberCreateView(GenericAPIView):
             adjacent = bool(request.query_params.get("adjacent", False))
             column = bool(request.query_params.get("column", False))
             spread = bool(request.query_params.get("spread", False))
-
+           
             user_favorite_numbers = UserNumbersModel.objects.filter(
                 user=request.user
             ).first()
@@ -34,15 +34,14 @@ class UserNumberCreateView(GenericAPIView):
             user_favorite_numbers_serialized = UserNumbersSerializer(
                 user_favorite_numbers
             )
-            # print(user_favorite_numbers_serialized.data["numbers"], "<<<<<<<<<<<<<<<<<<<<<<<<<,")
             if len(user_favorite_numbers_serialized.data["numbers"]) == 0:
-                numbers = set()    
+                numbers = set()
             else:
                 numbers = {
                     int(number)
-                    for number in user_favorite_numbers_serialized.data["numbers"].split(
-                        ", "
-                    )
+                    for number in user_favorite_numbers_serialized.data[
+                        "numbers"
+                    ].split(", ")
                 }
             draw_numbers = lucky(numbers, adjacent, column, spread)
 

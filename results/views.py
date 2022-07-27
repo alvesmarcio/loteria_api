@@ -2,10 +2,9 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.generics import (
     ListCreateAPIView,
     RetrieveUpdateDestroyAPIView,
-    GenericAPIView
+    GenericAPIView,
 )
-from rest_framework.views import APIView, Request, Response, status
-from rest_framework.pagination import PageNumberPagination
+from rest_framework.views import Request
 
 from results.models import Result
 from results.permissions import AdminPermission, ListOrAdminPermission
@@ -57,9 +56,7 @@ class GetListResultsView(GenericAPIView):
 
             results = Result.objects.all()
 
-        pagination = self.paginate_queryset(
-            queryset=results
-        )
+        pagination = self.paginate_queryset(queryset=results)
         serialized = ResultSerializer(pagination, many=True)
 
         return self.get_paginated_response(serialized.data)
