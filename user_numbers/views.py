@@ -26,7 +26,7 @@ class UserNumberCreateView(GenericAPIView):
             adjacent = bool(request.query_params.get("adjacent", False))
             column = bool(request.query_params.get("column", False))
             spread = bool(request.query_params.get("spread", False))
-
+           
             user_favorite_numbers = UserNumbersModel.objects.filter(
                 user=request.user
             ).first()
