@@ -6,7 +6,9 @@ from users.managers import UserManager
 
 
 class User(AbstractUser):
-    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+    id = models.CharField(
+        primary_key=True, default=uuid4, editable=False, max_length=50
+    )
     created_at = models.DateField(auto_now_add=True)
-    
+
     objects = UserManager()
