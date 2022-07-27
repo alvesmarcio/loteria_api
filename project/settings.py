@@ -10,27 +10,30 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
-import os
+from os import getenv, path
 from pathlib import Path
-import dotenv
+from dotenv import load_dotenv
 import dj_database_url
 
 
-dotenv.load_dotenv(dotenv.find_dotenv())
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+STATIC_ROOT = path.join(BASE_DIR, "staticfiles")
+STATIC_URL = "/static/"
+STATICFILES_DIRS = (path.join(BASE_DIR, "static"),)
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv("SECRET_KEY")
+SECRET_KEY = getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("DEBUG", True)
-# DEBUG = True
+DEBUG = getenv("DEBUG", True)
 
 ALLOWED_HOSTS = ["loteriapi.herokuapp.com", "localhost"]
 
@@ -52,12 +55,12 @@ THIRD_PARTY_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "rest_framework_swagger",
-    "drf_yasg"
+    "drf_yasg",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + MY_APPS + THIRD_PARTY_APPS
 
-MIDDLEWARE = [
+DJANGO_MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -67,12 +70,18 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+THIRD_PARTY_MIDDLEWARE = [
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+]
+
+MIDDLEWARE = DJANGO_MIDDLEWARE + THIRD_PARTY_MIDDLEWARE
+
 ROOT_URLCONF = "project.urls"
 
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [os.path.join(BASE_DIR, 'template')],
+        "DIRS": [path.join(BASE_DIR, "template")],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -99,7 +108,7 @@ DATABASES = {
 }
 
 
-DATABASE_URL = os.environ.get("DATABASE_URL")
+DATABASE_URL = getenv("DATABASE_URL", False)
 
 if DATABASE_URL:
     db_from_env = dj_database_url.config(
@@ -150,5 +159,10 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "users.User"
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
-REST_FRAMEWORK = { "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination", "PAGE_SIZE": 5 }
+ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+REST_FRAMEWORK = {
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 5,
+}
+
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
