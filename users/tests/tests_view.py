@@ -4,7 +4,7 @@ from rest_framework.test import APITestCase
 from faker import Faker
 
 
-class AccountViewTest(APITestCase):
+class UserViewTest(APITestCase):
     @classmethod
     def setUpTestData(cls) -> None:
         cls.fake = Faker()
