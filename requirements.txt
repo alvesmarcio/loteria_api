@@ -10,6 +10,7 @@ Django==4.0.6
 django-rest-swagger==2.2.0
 djangorestframework==3.13.1
 drf-yasg==1.21.3
+Faker==13.15.1
 gunicorn==20.1.0
 idna==3.3
 inflection==0.5.1
@@ -24,12 +25,14 @@ pathspec==0.9.0
 platformdirs==2.5.2
 psycopg2-binary==2.9.3
 pyparsing==3.0.9
+python-dateutil==2.8.2
 python-dotenv==0.20.0
 pytz==2022.1
 requests==2.28.1
 ruamel.yaml==0.17.21
 ruamel.yaml.clib==0.2.6
 simplejson==3.17.6
+six==1.16.0
 sqlparse==0.4.2
 tomli==2.0.1
 typing-extensions==4.3.0
