@@ -27,16 +27,19 @@ def lucky(req_numbers, adjacent=False, column=False, spread=False):
     def _remove_adjacent(number, excluded_adjacents):
         excluded_adjacents.add(number - 1)
         excluded_adjacents.add(number + 1)
+        return excluded_adjacents
 
     def _remove_column(number, excluded_columns):
         column = {n for n in range(number % 10, 61, 10)}
         excluded_columns = excluded_columns.union(column)
+        return excluded_columns
 
     def _remove_sextant(number, excluded_sextants):
         for sextant in SEXTANTS:
             if number in sextant:
                 excluded_sextants = excluded_sextants.union(sextant)
                 break
+        return excluded_sextants
 
         """
         Takes in numbers as arguments and returns a list of 6 numbers from 1 to 60.
@@ -48,29 +51,30 @@ def lucky(req_numbers, adjacent=False, column=False, spread=False):
         """
 
     for number in req_numbers:
-        _remove_adjacent(number, excluded_adjacents)
-        _remove_column(number, excluded_columns)
-        _remove_sextant(number, excluded_sextants)
+        excluded_adjacents = excluded_adjacents.union(_remove_adjacent(number, excluded_adjacents))
+        excluded_columns = excluded_columns.union(_remove_column(number, excluded_columns))
+        excluded_sextants = excluded_sextants.union(_remove_sextant(number, excluded_sextants))
         numbers.discard(number)
 
     for _ in range(len(req_numbers), 6):
 
-        if adjacent:
+        if adjacent == True:
             numbers = numbers.difference(excluded_adjacents)
 
-        if column:
+        if column == True:
             numbers = numbers.difference(excluded_columns)
 
-        if spread:
+        if spread == True:
             numbers = numbers.difference(excluded_sextants)
 
         new_number = choice(tuple(numbers))
         req_numbers.add(new_number)
 
-        _remove_adjacent(new_number, excluded_adjacents)
-        _remove_column(new_number, excluded_columns)
-        _remove_sextant(new_number, excluded_sextants)
+        excluded_adjacents = excluded_adjacents.union(_remove_adjacent(new_number, excluded_adjacents))
+        excluded_columns = excluded_columns.union(_remove_column(new_number, excluded_columns))
+        excluded_sextants = excluded_sextants.union(_remove_sextant(new_number, excluded_sextants))
         numbers.discard(new_number)
+        
     req_numbers = list(req_numbers)
     req_numbers.sort()
 
